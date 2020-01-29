@@ -1,0 +1,77 @@
+.todo {
+  display: flex;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #555;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.todo:last-child {
+  margin-bottom: 0;
+}
+
+.todo.done {
+  background: #00C267;
+  color: #f0f0f0;
+}
+
+.todo.canceled {
+  background: #999;
+  color: #ddd;
+}
+
+.todo-data {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.todo-text.line-through {
+  text-decoration: line-through;
+}
+
+.todo-input {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 16px;
+  color: #555;
+  position: relative;
+  bottom: 1px;
+}
+
+.todo-actions {
+  display: flex;
+  align-items: center;
+}
+
+.todo-action {
+  margin-left: 10px;
+}
+
+.todo-action:first-child {
+  margin-left: 0;
+}
+
+.todo-action.cancel {
+  color: lightcoral;
+}
+
+.todo-action.edit,
+.todo-action.submit-editing {
+  color: #209CEE;
+}
+
+.todo-action.check {
+  color: #00C267;
+}
+
+.todo-action.undo {
+  color: #fff;
+}
+
+.todo-action.cancel-editing {
+  color: #555;
+}

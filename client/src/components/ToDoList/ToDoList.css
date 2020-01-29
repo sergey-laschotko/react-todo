@@ -1,0 +1,8 @@
+.todo-list-message {
+    font-weight: bold;
+    border: 1px solid #ddd;
+    text-align: center;
+    color: #555;
+    border-radius: 5px;
+    padding: 10px 20px;
+}

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js --ignore public --ignore storage.json",
+    "dev": "nodemon server.js --ignore storage.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
