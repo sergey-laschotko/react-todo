@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './AddToDo.css';
 import { connect } from 'react-redux';
 import { addToDo } from '../../actions';
+import uuid from 'uuid';
 
 const AddToDo = ({ addToDo }) => {
   const [isAdding, setIsAdding] = useState(false);
@@ -13,6 +14,7 @@ const AddToDo = ({ addToDo }) => {
     } else {
       if (todo) {
         addToDo({
+          id: uuid(),
           text: todo,
           done: false,
           canceled: false

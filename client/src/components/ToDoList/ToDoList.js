@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import './ToDoList.css';
 import { connect } from 'react-redux';
+import { changeOrder } from '../../actions';
 import { withRouter } from 'react-router-dom';
 import ToDo from '../ToDo';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-const ToDoList = ({ location, type, todos }) => {
+const ToDoList = ({ location, type, todos, changeOrder }) => {
   const [currentToDos, setCurrentToDos] = useState([]);
 
   const prepareTodosList = () => {
-    const keys = Object.keys(todos);
     if (type === 'to-do') {
-      setCurrentToDos(keys.filter(id => !todos[id].done && !todos[id].canceled && !todos[id].canceled));
+      setCurrentToDos(todos.filter(todo => !todo.done && !todo.canceled && !todo.canceled));
     } else if (type === 'done') {
-      setCurrentToDos(keys.filter(id => todos[id].done));
+      setCurrentToDos(todos.filter(todo => todo.done));
     } else if (type === 'canceled') {
-      setCurrentToDos(keys.filter(id => todos[id].canceled));
+      setCurrentToDos(todos.filter(todo => todo.canceled));
     } else {
-      setCurrentToDos(keys);
+      setCurrentToDos(todos);
     }
   };
 
@@ -28,8 +28,22 @@ const ToDoList = ({ location, type, todos }) => {
       return;
     }
 
-    console.log(destination);
-    console.log(source);
+    const todo1 = currentToDos[source.index];
+    const todo2 = currentToDos[destination.index];
+    const id1 = todo1.id;
+    const id2 = todo2.id;
+    const currentToDosCopy = [...currentToDos];
+    if (type === 'all') {
+      changeOrder({ id1, id2, all: true });
+      const [removed] = currentToDosCopy.splice(source.index, 1);
+      currentToDosCopy.splice(destination.index, 0, removed);
+      setCurrentToDos(currentToDosCopy);
+    } else {
+      currentToDosCopy[source.index] = todo2;
+      currentToDosCopy[destination.index] = todo1;
+      setCurrentToDos(currentToDosCopy);
+      changeOrder({ id1, id2, all: false });
+    }
   };
 
   return (
@@ -38,13 +52,18 @@ const ToDoList = ({ location, type, todos }) => {
         {(provided, snapshot) => {
           return (<div className="todo-list" { ...provided.droppableProps } ref={provided.innerRef}>
             {currentToDos.length
-              ? currentToDos.map((id, index) => (
-                <Draggable key={id} draggableId={id} index={index}>
+              ? currentToDos.map((todo, index) => (
+                <Draggable key={todo.id} draggableId={todo.id} index={index}>
                   {(provided, snapshot) => (
-                    <div key={id} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={{ marginBottom: '5px', ...provided.draggableProps.style}}>
+                    <div
+                      key={todo.id}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={{ marginBottom: '5px', ...provided.draggableProps.style}}
+                    >
                       <ToDo
-                        todo={todos[id]}
-                        toDoId={id}
+                        todo={todo}
                       />
                     </div>
                   )}
@@ -63,4 +82,8 @@ const mapStateToProps = state => ({
   todos: state
 });
 
-export default connect(mapStateToProps)(withRouter(ToDoList));
+const mapDispatchToProps = dispatch => ({
+  changeOrder: ({ id1, id2, all }) => dispatch(changeOrder({ id1, id2, all }))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToDoList));

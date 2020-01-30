@@ -5,7 +5,7 @@ import { cancelToDo, undoToDo, checkToDo, editToDo } from '../../actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faCheck, faTimes, faUndo, faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
-const ToDo = ({ todo, toDoId, cancelToDo, undoToDo, checkToDo, editToDo }) => {
+const ToDo = ({ todo, cancelToDo, undoToDo, checkToDo, editToDo }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [toDoText, setToDoText] = useState(todo.text);
 
@@ -15,7 +15,7 @@ const ToDo = ({ todo, toDoId, cancelToDo, undoToDo, checkToDo, editToDo }) => {
   };
 
   const submitEditing = () => {
-    editToDo(toDoId, toDoText);
+    editToDo(todo.id, toDoText);
     setIsEditing(false);
   };
 
@@ -43,13 +43,13 @@ const ToDo = ({ todo, toDoId, cancelToDo, undoToDo, checkToDo, editToDo }) => {
               {!todo.done && !todo.canceled
                 ? (
                   <React.Fragment>
-                    <button className="button icon-button todo-action cancel" onClick={() => cancelToDo(toDoId)}>
+                    <button className="button icon-button todo-action cancel" onClick={() => cancelToDo(todo.id)}>
                       <FontAwesomeIcon icon={faTimes} />
                     </button>
                     <button className="button icon-button todo-action edit" onClick={() => setIsEditing(true)}>
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button className="button icon-button todo-action check" onClick={() => checkToDo(toDoId)}>
+                    <button className="button icon-button todo-action check" onClick={() => checkToDo(todo.id)}>
                       <FontAwesomeIcon icon={faCheck} />
                     </button>
                   </React.Fragment>
@@ -57,7 +57,7 @@ const ToDo = ({ todo, toDoId, cancelToDo, undoToDo, checkToDo, editToDo }) => {
               }
               {todo.canceled
                 ? (
-                  <button className="button icon-button todo-action undo" onClick={() => undoToDo(toDoId)}>
+                  <button className="button icon-button todo-action undo" onClick={() => undoToDo(todo.id)}>
                     <FontAwesomeIcon icon={faUndo} />
                   </button>
                 ) : null

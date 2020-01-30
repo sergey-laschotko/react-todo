@@ -24,3 +24,8 @@ export const editToDo = ({ id, text }) => ({
     type: actionTypes.EDIT_TODO,
     payload: { id, text }
 });
+
+export const changeOrder = ({ id1, id2, all }) => ({
+    type: actionTypes.CHANGE_ORDER,
+    payload: { id1, id2, all }
+});
