@@ -10,7 +10,7 @@ type PropsType<T> = T & {
   todo: ToDoType
 };
 
-const ToDo = ({ todo, socket, ...rest }: PropsType<T>) => {
+const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [toDoText, setToDoText] = useState(todo.text);
   const { cancelToDo, undoToDo, checkToDo, editToDo, deleteToDo } = rest;

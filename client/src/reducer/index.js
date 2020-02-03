@@ -1,12 +1,5 @@
 import { actionTypes } from "../actionTypes";
-
-type StateType = {
-  id: string,
-  text: string,
-  done: boolean,
-  canceled: boolean,
-  updated: number
-}[];
+import type { StateType } from '../types';
 
 type ActionType = {
   type: String,
@@ -108,7 +101,7 @@ const todos = (state: StateType = [], action: ActionType) => {
           const [removed] = stateCopy.splice(todo1Index, 1);
           stateCopy.splice(todo2Index, 0, removed);
           stateCopy[todo2Index].updated = new Date().valueOf();
-          localStorage.setItem('todos', stateCopy);
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
           return stateCopy;
         } else {
           return state;

@@ -3,7 +3,8 @@ export type ToDoType = {
   text: string,
   done: boolean,
   canceled: boolean,
-  updated: number
+  updated: number,
+  deleted: boolean
 };
 
 export type StateType = ToDoType[];
@@ -15,6 +16,5 @@ export type EditToDoPropType = {
 
 export type ChangeOrderType = {
   id1: string,
-  id2: string,
-  all: boolean
+  id2: string
 };

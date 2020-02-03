@@ -7,7 +7,10 @@ import { setToDos } from './actions';
 import AddToDo from './components/AddToDo';
 import ToDoList from './components/ToDoList';
 
-function App({ setToDos, todos }) {
+type PropsType<T> = T;
+
+function App<T: *>({ ...rest }: PropsType<T>) {
+  const { setToDos, todos } = rest;
   const [socketInstance, setSocketInstance] = useState();
   const setCurrentTodos = useState(todos)[1];
   const [error, setError] = useState('');
@@ -35,7 +38,7 @@ function App({ setToDos, todos }) {
 
     socket.on('todos were changed', (todos) => setToDos(todos));
 
-    socket.on('error', (data) => {
+    socket.on('error occured', (data) => {
       setError(data.error);
       setToDos(data.todos);
     });
@@ -65,7 +68,7 @@ function App({ setToDos, todos }) {
     if (error) {
       setTimeout(() => {
         setError('');
-      }, 2000);
+      }, 3000);
     }
   }, [error]);
 

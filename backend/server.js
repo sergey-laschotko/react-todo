@@ -33,9 +33,9 @@ const io = socketIo(server);
 
 function broadcastTodos(socket, result) {
   if (socket && !result.error) {
-    socket.broadcast.emit('todos were changed', todos);
+    socket.broadcast.emit('todos were changed', result);
   } else {
-    socket.emit('error', result);
+    socket.emit('error occured', result);
   }
 }
 

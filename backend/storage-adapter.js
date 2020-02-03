@@ -46,10 +46,14 @@ module.exports = {
 	},
 	cancelToDo: todoId => {
 		try {
-			const todos = [...storage.todos];
-			const todoIndex = todos.map(todo => todo.id).indexOf(todoId);
-			todos[todoIndex].canceled = true;
-			todos[todoIndex].updated = new Date().valueOf();
+			const todos = storage.todos.map(todo => {
+				const newTodo = { ...todo };
+				if (newTodo.id === todoId) {
+					newTodo.canceled = true;
+					newTodo.updated = new Date().valueOf();
+				}
+				return newTodo;
+			});
 			fs.writeFileSync('storage.json', JSON.stringify(todos));
 			storage.todos = todos;
 			return todos;
@@ -60,10 +64,14 @@ module.exports = {
 	},
 	undoToDo: todoId => {
 		try {
-			const todos = [...storage.todos];
-			const todoIndex = todos.map(todo => todo.id).indexOf(todoId);
-			todos[todoIndex].canceled = false;
-			todos[todoIndex].updated = new Date().valueOf();
+			const todos = storage.todos.map(todo => {
+				const newTodo = { ...todo };
+				if (newTodo.id === todoId) {
+					newTodo.canceled = false;
+					newTodo.updated = new Date().valueOf();
+				}
+				return newTodo;
+			});
 			fs.writeFileSync('storage.json', JSON.stringify(todos));
 			storage.todos = todos;
 			return todos;
@@ -74,11 +82,15 @@ module.exports = {
 	},
 	checkToDo: todoId => {
 		try {
-			const todos = [...storage.todos];
-			const todoIndex = todos.map(todo => todo.id).indexOf(todoId);
-			todos[todoIndex].done = true;
-			todos[todoIndex].canceled = false;
-			todos[todoIndex].updated = new Date().valueOf();
+			const todos = storage.todos.map(todo => {
+				const newTodo = { ...todo };
+				if (newTodo.id === todoId) {
+					newTodo.done = true;
+					newTodo.canceled = false;
+					newTodo.updated = new Date().valueOf();
+				}
+				return newTodo;
+			});
 			fs.writeFileSync('storage.json', JSON.stringify(todos));
 			storage.todos = todos;
 			return todos;
@@ -89,10 +101,16 @@ module.exports = {
 	},
 	deleteToDo: todoId => {
 		try {
-			const todos = [...storage.todos];
-			const todoIndex = todos.map(todo => todo.id).indexOf(todoId);
-			todos[todoIndex].deleted = true;
-			todos[todoIndex].updated = new Date().valueOf();
+			const todos = storage.todos.map(todo => {
+				const newTodo = { ...todo };
+				if (newTodo.id === todoId) {
+					newTodo.deleted = true;
+					newTodo.done = false;
+					newTodo.canceled = false;
+					newTodo.updated = new Date().valueOf();
+				}
+				return newTodo;
+			});
 			fs.writeFileSync('storage.json', JSON.stringify(todos));
 			storage.todos = todos;
 			return todos;
@@ -103,10 +121,14 @@ module.exports = {
 	},
 	editToDo: (toDoId, text) => {
 		try {
-			const todos = [...storage.todos];
-			const todoIndex = todos.map(todo => todo.id).indexOf(toDoId);
-			todos[todoIndex].text = text;
-			todos[todoIndex].updated = new Date().valueOf();
+			const todos = storage.todos.map(todo => {
+				const newTodo = { ...todo };
+				if (newTodo.id === todoId) {
+					newTodo.text = text;
+					newTodo.updated = new Date().valueOf();
+				}
+				return newTodo;
+			});
 			fs.writeFileSync('storage.json', JSON.stringify(todos));
 			storage.todos = todos;
 			return todos;
@@ -127,7 +149,7 @@ module.exports = {
 	},
 	mergeTodos: todos => {
 		try {
-			const todosCopy = [...storage.todos];
+			const todosCopy = storage.todos.map(todo => ({ ...todo }));
 			const newTodos = [];
 			if (todos.length > todosCopy.length) {
 				todos.map(todo => {
