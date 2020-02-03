@@ -5,25 +5,36 @@ import { changeOrder } from '../../actions';
 import { withRouter } from 'react-router-dom';
 import ToDo from '../ToDo';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import type { ToDoType, StateType } from '../../types';
+import type { Location } from 'react-router-dom';
 
-const ToDoList = ({ location, type, todos, changeOrder }) => {
+type ToDosType = ToDoType[];
+
+type PropsType<T> = T & {
+  location: Location,
+  type: string,
+  todos: ToDosType
+};
+
+const ToDoList = <T: *>({ location, type, todos, socket, ...rest }: PropsType<T>) => {
   const [currentToDos, setCurrentToDos] = useState([]);
+  const { changeOrder } = rest;
 
-  const prepareTodosList = () => {
+  const prepareTodosList: () => void = () => {
     if (type === 'to-do') {
-      setCurrentToDos(todos.filter(todo => !todo.done && !todo.canceled && !todo.canceled));
+      setCurrentToDos(todos.filter(todo => !todo.done && !todo.canceled && !todo.canceled && !todo.deleted));
     } else if (type === 'done') {
-      setCurrentToDos(todos.filter(todo => todo.done));
+      setCurrentToDos(todos.filter(todo => todo.done && !todo.deleted));
     } else if (type === 'canceled') {
-      setCurrentToDos(todos.filter(todo => todo.canceled));
+      setCurrentToDos(todos.filter(todo => todo.canceled && !todo.deleted));
     } else {
-      setCurrentToDos(todos);
+      setCurrentToDos(todos.filter(todo => !todo.deleted));
     }
   };
 
   useEffect(prepareTodosList, [location, todos]);
 
-  const onDragEnd = ({ destination, source }) => {
+  const onDragEnd: (any, any) => void = ({ destination, source }) => {
     if (!destination) {
       return;
     }
@@ -32,18 +43,16 @@ const ToDoList = ({ location, type, todos, changeOrder }) => {
     const todo2 = currentToDos[destination.index];
     const id1 = todo1.id;
     const id2 = todo2.id;
-    const currentToDosCopy = [...currentToDos];
-    if (type === 'all') {
-      changeOrder({ id1, id2, all: true });
-      const [removed] = currentToDosCopy.splice(source.index, 1);
-      currentToDosCopy.splice(destination.index, 0, removed);
-      setCurrentToDos(currentToDosCopy);
-    } else {
-      currentToDosCopy[source.index] = todo2;
-      currentToDosCopy[destination.index] = todo1;
-      setCurrentToDos(currentToDosCopy);
-      changeOrder({ id1, id2, all: false });
-    }
+    const ids = todos.map(todo => todo.id);
+    const id1Index = ids.indexOf(id1);
+    const id2Index = ids.indexOf(id2);
+    const toDosCopy = [...todos];
+    changeOrder({ id1, id2 });
+    const [removed] = toDosCopy.splice(id1Index, 1);
+    toDosCopy.splice(id2Index, 0, removed);
+    toDosCopy[id2Index].updated = new Date().valueOf();
+    setCurrentToDos(toDosCopy);
+    socket.emit('change order', (toDosCopy));
   };
 
   return (
@@ -64,6 +73,7 @@ const ToDoList = ({ location, type, todos, changeOrder }) => {
                     >
                       <ToDo
                         todo={todo}
+                        socket={socket}
                       />
                     </div>
                   )}
@@ -78,12 +88,12 @@ const ToDoList = ({ location, type, todos, changeOrder }) => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: StateType) => ({
   todos: state
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeOrder: ({ id1, id2, all }) => dispatch(changeOrder({ id1, id2, all }))
+  changeOrder: ({ id1, id2 }) => dispatch(changeOrder({ id1, id2 }))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToDoList));

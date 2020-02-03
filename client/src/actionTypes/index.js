@@ -3,6 +3,8 @@ export const actionTypes =  {
     'CANCEL_TODO': 'cancelToDo',
     'UNDO_TODO': 'undoToDo',
     'CHECK_TODO': 'checkToDo',
-    'EDIT_TODO': 'editToDO',
-    'CHANGE_ORDER': 'changeOrder'
+    'EDIT_TODO': 'editToDo',
+    'DELETE_TODO': 'deleteToDo',
+    'CHANGE_ORDER': 'changeOrder',
+    'SET_TODOS': 'setToDos'
 };

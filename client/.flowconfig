@@ -1,0 +1,15 @@
+[ignore]
+  .*/node_modules/.*
+  .*/src/index\.js
+  .*/src/serviceWorker\.js
+  .*/src/setupTests\.js
+  .*/.*/*test\.js
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+  all=true
+[strict]

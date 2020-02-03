@@ -13,6 +13,26 @@
   height: 100%;
 }
 
+.error {
+  position: fixed;
+  top: -110%;
+  left: 50%;
+  border: 2px solid lightcoral;
+  border-radius: 5px;
+  padding: 10px 20px;
+  max-width: 100%;
+  color: lightcoral;
+  background: #ffff;
+  box-shadow: 0 0 1px 2px #fff;
+  transform: translateX(-50%);
+  transition: top 0.5s ease-in-out;
+}
+
+.error.shown {
+  top: 60px;
+  transition: top 0.5s ease-in-out;
+}
+
 .heading {
   font-size: 24px;
   font-weight: bold;

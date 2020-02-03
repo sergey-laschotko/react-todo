@@ -4,32 +4,42 @@ import { connect } from 'react-redux';
 import { addToDo } from '../../actions';
 import uuid from 'uuid';
 
-const AddToDo = ({ addToDo }) => {
+type PropsType<T> = T;
+
+const AddToDo = <T: *>({ socket, ...props }: PropsType<T>) => {
   const [isAdding, setIsAdding] = useState(false);
   const [todo, setToDo] = useState('');
-
-  const add = () => {
+  const { addToDo } = props;
+  
+  const add: () => void = () => {
     if (!isAdding) {
       setIsAdding(true);
     } else {
       if (todo) {
-        addToDo({
+        const newToDo = {
           id: uuid(),
           text: todo,
           done: false,
-          canceled: false
-        });
+          canceled: false,
+          deleted: false,
+          updated: new Date().valueOf()
+        };
+
+        addToDo(newToDo);
+        if (socket) {
+          socket.emit('new todo', newToDo)
+        }
         setToDo('');
       }
     }
   };
 
-  const cancelAdding = () => {
+  const cancelAdding: () => void = () => {
     setIsAdding(false);
     setToDo('');
   };
 
-  const onAddInputKeyDown = event => {
+  const onAddInputKeyDown: (event: SyntheticKeyboardEvent<HTMLButtonElement>) => void = event => {
     if (event.key === 'Enter') {
       event.preventDefault();
       add();
@@ -49,8 +59,10 @@ const AddToDo = ({ addToDo }) => {
   );
 };
 
+const mapStateToProps = state => ({});
+
 const mapDispatchToProps = dispatch => ({
   addToDo: todo => dispatch(addToDo(todo))
 });
 
-export default connect(null, mapDispatchToProps)(AddToDo);
+export default connect(mapStateToProps, mapDispatchToProps)(AddToDo);

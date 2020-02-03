@@ -1,50 +1,25 @@
 import { actionTypes } from "../actionTypes";
-import uuid from 'uuid';
 
-const mockState = [
-  {
-    id: uuid(),
-    text: 'First Todo',
-    done: false,
-    canceled: false
-  },
-  {
-    id: uuid(),
-    text: 'Make tea',
-    done: true,
-    canceled: false
-  },
-  {
-    id: uuid(),
-    text: 'Nothing to do',
-    done: false,
-    canceled: true
-  },
-  {
-    id: uuid(),
-    text: 'Write ToDo',
-    done: false,
-    canceled: false
-  },
-  {
-    id: uuid(),
-    text: 'Sleep',
-    done: false,
-    canceled: false
-  },
-  {
-    id: uuid(),
-    text: 'Go shopping',
-    done: true,
-    canceled: false
-  }
-];
+type StateType = {
+  id: string,
+  text: string,
+  done: boolean,
+  canceled: boolean,
+  updated: number
+}[];
 
-const todos = (state = mockState, action) => {
+type ActionType = {
+  type: String,
+  payload: any
+};
+
+const todos = (state: StateType = [], action: ActionType) => {
   switch (action.type) {
     case actionTypes.ADD_TODO:
       if (action.payload) {
-        return [...state, action.payload];
+        const newState = [...state, action.payload];
+        localStorage.setItem('todos', JSON.stringify(newState));
+        return newState;
       } else {
         return state;
       }
@@ -54,6 +29,8 @@ const todos = (state = mockState, action) => {
         const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
         if (todoIndex >= 0) {
           stateCopy[todoIndex].canceled = true;
+          stateCopy[todoIndex].updated = new Date().valueOf();
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
           return stateCopy;
         } else {
           return state;
@@ -67,6 +44,8 @@ const todos = (state = mockState, action) => {
         const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
         if (todoIndex >= 0) {
           stateCopy[todoIndex].canceled = false;
+          stateCopy[todoIndex].updated = new Date().valueOf();
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
           return stateCopy;
         } else {
           return state;
@@ -80,6 +59,8 @@ const todos = (state = mockState, action) => {
         const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
         if (todoIndex >= 0) {
           stateCopy[todoIndex].done = true;
+          stateCopy[todoIndex].updated = new Date().valueOf();
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
           return stateCopy;
         } else {
           return state;
@@ -93,7 +74,24 @@ const todos = (state = mockState, action) => {
         const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload.id);
         if (todoIndex >= 0) {
           stateCopy[todoIndex].text = action.payload.text;
+          stateCopy[todoIndex].updated = new Date().valueOf();
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
+          return stateCopy;
+        } else {
           return state;
+        }
+      } else {
+        return state;
+      }
+    case actionTypes.DELETE_TODO:
+      if (action.payload !== undefined) {
+        const stateCopy = [ ...state ];
+        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
+        if (todoIndex >= 0) {
+          stateCopy[todoIndex].deleted = true;
+          stateCopy[todoIndex].updated = new Date().valueOf();
+          localStorage.setItem('todos', JSON.stringify(stateCopy));
+          return stateCopy;
         } else {
           return state;
         }
@@ -107,20 +105,21 @@ const todos = (state = mockState, action) => {
         const todo1Index = todoIds.indexOf(action.payload.id1);
         const todo2Index = todoIds.indexOf(action.payload.id2);
         if (todo1Index >= 0 && todo2Index >= 0) {
-          if (action.payload.all) {
-            const [removed] = stateCopy.splice(todo1Index, 1);
-            stateCopy.splice(todo2Index, 0, removed);
-          } else {
-            console.log('changing');
-            const todo1 = { ...stateCopy[todo1Index] };
-            const todo2 = { ...stateCopy[todo2Index] };
-            stateCopy[todo1Index] = todo2;
-            stateCopy[todo2Index] = todo1;
-          }
+          const [removed] = stateCopy.splice(todo1Index, 1);
+          stateCopy.splice(todo2Index, 0, removed);
+          stateCopy[todo2Index].updated = new Date().valueOf();
+          localStorage.setItem('todos', stateCopy);
           return stateCopy;
         } else {
           return state;
         }
+      } else {
+        return state;
+      }
+    case actionTypes.SET_TODOS:
+      if (action.payload) {
+        localStorage.setItem('todos', JSON.stringify(action.payload));
+        return action.payload;
       } else {
         return state;
       }

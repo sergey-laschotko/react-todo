@@ -1,31 +1,42 @@
 import { actionTypes } from '../actionTypes';
+import type { ToDoType, EditToDoPropType, ChangeOrderType } from '../types';
 
-export const addToDo = todo => ({
+export const addToDo = (todo: ToDoType) => ({
     type: actionTypes.ADD_TODO,
     payload: todo
 });
 
-export const cancelToDo = toDoId => ({
-    type: actionTypes.CANCEL_TODO,
-    payload: toDoId
+export const setToDos = (todos: ToDoType[]) => ({
+    type: actionTypes.SET_TODOS,
+    payload: todos
 });
 
-export const undoToDo = toDoId => ({
+export const cancelToDo = (toDoId: string) => ({
+  type: actionTypes.CANCEL_TODO,
+  payload: toDoId
+});
+
+export const undoToDo = (toDoId: string) => ({
     type: actionTypes.UNDO_TODO,
     payload: toDoId
 });
 
-export const checkToDo = toDoId => ({
+export const checkToDo = (toDoId: string) => ({
     type: actionTypes.CHECK_TODO,
     payload: toDoId
 });
 
-export const editToDo = ({ id, text }) => ({
+export const editToDo = ({ id, text }: EditToDoPropType) => ({
     type: actionTypes.EDIT_TODO,
     payload: { id, text }
 });
 
-export const changeOrder = ({ id1, id2, all }) => ({
+export const deleteToDo = (todoId: string) => ({
+    type: actionTypes.DELETE_TODO,
+    payload: todoId
+});
+
+export const changeOrder = ({ id1, id2 }: ChangeOrderType) => ({
     type: actionTypes.CHANGE_ORDER,
-    payload: { id1, id2, all }
+    payload: { id1, id2 }
 });

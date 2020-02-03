@@ -1,22 +1,59 @@
 import React, { useState } from "react";
 import "./ToDo.css";
 import { connect } from 'react-redux';
-import { cancelToDo, undoToDo, checkToDo, editToDo } from '../../actions';
+import { cancelToDo, undoToDo, checkToDo, editToDo, deleteToDo } from '../../actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faCheck, faTimes, faUndo, faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faCheck, faTimes, faUndo, faTimesCircle, faCheckCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { type ToDoType } from '../../types';
 
-const ToDo = ({ todo, cancelToDo, undoToDo, checkToDo, editToDo }) => {
+type PropsType<T> = T & {
+  todo: ToDoType
+};
+
+const ToDo = ({ todo, socket, ...rest }: PropsType<T>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [toDoText, setToDoText] = useState(todo.text);
+  const { cancelToDo, undoToDo, checkToDo, editToDo, deleteToDo } = rest;
 
-  const cancelEditing = () => {
+  const cancelEditing: () => void = () => {
     setToDoText(todo.text);
     setIsEditing(false);
   };
 
-  const submitEditing = () => {
-    editToDo(todo.id, toDoText);
+  const submitEditing: () => void  = () => {
+    editToDo({ id: todo.id, text: toDoText });
+    if (socket) {
+      socket.emit('edit todo', { id: todo.id, text: toDoText });
+    }
     setIsEditing(false);
+  };
+
+  const cancel = todoId => {
+    cancelToDo(todoId);
+    if (socket) {
+      socket.emit('cancel todo', todoId);
+    }
+  };
+
+  const check = todoId => {
+    checkToDo(todoId);
+    if (socket) {
+      socket.emit('check todo', todoId);
+    }
+  };
+
+  const undo = todoId => {
+    undoToDo(todoId);
+    if (socket) {
+      socket.emit('undo todo', todoId);
+    }
+  };
+
+  const deleteItem = todoId => {
+    deleteToDo(todoId);
+    if (socket) {
+      socket.emit('delete todo', todoId);
+    }
   };
 
   return (
@@ -43,21 +80,24 @@ const ToDo = ({ todo, cancelToDo, undoToDo, checkToDo, editToDo }) => {
               {!todo.done && !todo.canceled
                 ? (
                   <React.Fragment>
-                    <button className="button icon-button todo-action cancel" onClick={() => cancelToDo(todo.id)}>
+                    <button className="button icon-button todo-action cancel" onClick={() => cancel(todo.id)}>
                       <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                    <button className="button icon-button todo-action delete" onClick={() => deleteItem(todo.id)}>
+                      <FontAwesomeIcon icon={faTrash} />
                     </button>
                     <button className="button icon-button todo-action edit" onClick={() => setIsEditing(true)}>
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button className="button icon-button todo-action check" onClick={() => checkToDo(todo.id)}>
+                    <button className="button icon-button todo-action check" onClick={() => check(todo.id)}>
                       <FontAwesomeIcon icon={faCheck} />
                     </button>
                   </React.Fragment>
                 ) : null
               }
-              {todo.canceled
+              {!todo.done && todo.canceled
                 ? (
-                  <button className="button icon-button todo-action undo" onClick={() => undoToDo(todo.id)}>
+                  <button className="button icon-button todo-action undo" onClick={() => undo(todo.id)}>
                     <FontAwesomeIcon icon={faUndo} />
                   </button>
                 ) : null
@@ -70,11 +110,14 @@ const ToDo = ({ todo, cancelToDo, undoToDo, checkToDo, editToDo }) => {
   );
 };
 
+const mapStateToProps = state => ({});
+
 const mapDispatchToProps = dispatch => ({
-  cancelToDo: id => dispatch(cancelToDo(id)),
-  undoToDo: id => dispatch(undoToDo(id)),
-  checkToDo: id => dispatch(checkToDo(id)),
-  editToDo: (id, text) => dispatch(editToDo({ id, text }))
+  cancelToDo: (id: string) => dispatch(cancelToDo(id)),
+  undoToDo: (id: string) => dispatch(undoToDo(id)),
+  checkToDo: (id: string) => dispatch(checkToDo(id)),
+  editToDo: ({ id, text }: { id: string, text: string }) => dispatch(editToDo({ id, text })),
+  deleteToDo: (id: string) => dispatch(deleteToDo(id))
 });
 
-export default connect(null, mapDispatchToProps)(ToDo);
+export default connect(mapStateToProps, mapDispatchToProps)(ToDo);
