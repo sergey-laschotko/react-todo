@@ -110,8 +110,6 @@ const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
   );
 };
 
-const mapStateToProps = state => ({});
-
 const mapDispatchToProps = dispatch => ({
   cancelToDo: (id: string) => dispatch(cancelToDo(id)),
   undoToDo: (id: string) => dispatch(undoToDo(id)),
@@ -120,4 +118,4 @@ const mapDispatchToProps = dispatch => ({
   deleteToDo: (id: string) => dispatch(deleteToDo(id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ToDo);
+export default connect(null, mapDispatchToProps)(ToDo);

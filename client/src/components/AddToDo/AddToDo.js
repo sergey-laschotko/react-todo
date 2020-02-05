@@ -59,10 +59,8 @@ const AddToDo = <T: *>({ socket, ...props }: PropsType<T>) => {
   );
 };
 
-const mapStateToProps = state => ({});
-
 const mapDispatchToProps = dispatch => ({
   addToDo: todo => dispatch(addToDo(todo))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddToDo);
+export default connect(null, mapDispatchToProps)(AddToDo);
