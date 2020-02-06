@@ -60,7 +60,7 @@ const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
     <div className={`todo ${todo.done ? 'done' : ''} ${todo.canceled ? 'canceled' : ''}`}>
       <div className="todo-data">
         {isEditing
-          ? <input className="todo-input" type="text" value={toDoText} onChange={e => setToDoText(e.target.value)} />
+          ? <input className="todo-input" type="text" value={toDoText} data-testid="todo-edit-input" onChange={e => setToDoText(e.target.value)} />
           : <div className={`todo-text ${todo.canceled ? 'line-through' : ''}`}>{todo.text}</div>        
         }
       </div>
@@ -68,10 +68,10 @@ const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
         {isEditing
           ? (
             <React.Fragment>
-              <button className="button icon-button todo-action cancel-editing" onClick={cancelEditing}>
+              <button className="button icon-button todo-action cancel-editing" data-testid="cancel-editing" onClick={cancelEditing}>
                 <FontAwesomeIcon icon={faTimesCircle} />
               </button>
-              <button className="button icon-button todo-action submit-editing" onClick={submitEditing}>
+              <button className="button icon-button todo-action submit-editing" data-testid="submit-editing" onClick={submitEditing}>
                 <FontAwesomeIcon icon={faCheckCircle} />
               </button>
             </React.Fragment>
@@ -80,16 +80,16 @@ const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
               {!todo.done && !todo.canceled
                 ? (
                   <React.Fragment>
-                    <button className="button icon-button todo-action cancel" onClick={() => cancel(todo.id)}>
+                    <button className="button icon-button todo-action cancel" data-testid="cancel" onClick={() => cancel(todo.id)}>
                       <FontAwesomeIcon icon={faTimes} />
                     </button>
-                    <button className="button icon-button todo-action delete" onClick={() => deleteItem(todo.id)}>
+                    <button className="button icon-button todo-action delete" data-testid="delete" onClick={() => deleteItem(todo.id)}>
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
-                    <button className="button icon-button todo-action edit" onClick={() => setIsEditing(true)}>
+                    <button className="button icon-button todo-action edit" data-testid="set-editing" onClick={() => setIsEditing(true)}>
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button className="button icon-button todo-action check" onClick={() => check(todo.id)}>
+                    <button className="button icon-button todo-action check" data-testid="check" onClick={() => check(todo.id)}>
                       <FontAwesomeIcon icon={faCheck} />
                     </button>
                   </React.Fragment>
@@ -97,7 +97,7 @@ const ToDo = <T: *>({ todo, socket, ...rest }: PropsType<T>) => {
               }
               {!todo.done && todo.canceled
                 ? (
-                  <button className="button icon-button todo-action undo" onClick={() => undo(todo.id)}>
+                  <button className="button icon-button todo-action undo" data-testid="undo" onClick={() => undo(todo.id)}>
                     <FontAwesomeIcon icon={faUndo} />
                   </button>
                 ) : null
