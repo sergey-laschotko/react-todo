@@ -22,6 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "test-sw": "npm run build && http-server ./build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "flow": "flow"
@@ -42,6 +43,7 @@
     ]
   },
   "devDependencies": {
-    "flow-bin": "^0.117.0"
+    "flow-bin": "^0.117.0",
+    "http-server": "^0.12.1"
   }
 }
