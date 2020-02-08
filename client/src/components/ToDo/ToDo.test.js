@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import ToDo from './ToDo';
-import { actionTypes } from '../../actionTypes';
+import actionTypes from '../../actionTypes';
 
 const initialState = [
   {
@@ -17,90 +17,67 @@ const initialState = [
 ];
 
 const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case actionTypes.CANCEL_TODO:
-      if (action.payload !== undefined) {
-        const stateCopy = [ ...state ];
-        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
-        if (todoIndex >= 0) {
-          stateCopy[todoIndex].canceled = true;
-          stateCopy[todoIndex].updated = new Date().valueOf();
-          return stateCopy;
-        } else {
-          return state;
-        }
-      } else {
-        return state;
+  switch (action.type) {
+    case actionTypes.CANCEL_TODO: {
+      const stateCopy = [...state];
+      const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
+      if (todoIndex >= 0) {
+        stateCopy[todoIndex].canceled = true;
+        stateCopy[todoIndex].updated = new Date().valueOf();
+        return stateCopy;
       }
-    case actionTypes.UNDO_TODO:
-      if (action.payload !== undefined) {
-        const stateCopy = [ ...state ];
-        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
-        if (todoIndex >= 0) {
-          stateCopy[todoIndex].canceled = false;
-          stateCopy[todoIndex].updated = new Date().valueOf();
-          return stateCopy;
-        } else {
-          return state;
-        }
-      } else {
-        return state;
+      return state;
+    }
+    case actionTypes.UNDO_TODO: {
+      const stateCopy = [...state];
+      const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
+      if (todoIndex >= 0) {
+        stateCopy[todoIndex].canceled = false;
+        stateCopy[todoIndex].updated = new Date().valueOf();
+        return stateCopy;
       }
-    case actionTypes.CHECK_TODO:
-      if (action.payload !== undefined) {
-        const stateCopy = [ ...state ];
-        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
-        if (todoIndex >= 0) {
-          stateCopy[todoIndex].done = true;
-          stateCopy[todoIndex].updated = new Date().valueOf();
-          return stateCopy;
-        } else {
-          return state;
-        }
-      } else {
-        return state;
+      return state;
+    }
+    case actionTypes.CHECK_TODO: {
+      const stateCopy = [...state];
+      const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
+      if (todoIndex >= 0) {
+        stateCopy[todoIndex].done = true;
+        stateCopy[todoIndex].updated = new Date().valueOf();
+        return stateCopy;
       }
-    case actionTypes.EDIT_TODO:
-      if (action.payload && action.payload.id !== undefined) {
-        const stateCopy = [ ...state ];
-        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload.id);
-        if (todoIndex >= 0) {
-          stateCopy[todoIndex].text = action.payload.text;
-          stateCopy[todoIndex].updated = new Date().valueOf();
-          return stateCopy;
-        } else {
-          return state;
-        }
-      } else {
-        return state;
+      return state;
+    }
+    case actionTypes.EDIT_TODO: {
+      const stateCopy = [...state];
+      const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload.id);
+      if (todoIndex >= 0) {
+        stateCopy[todoIndex].text = action.payload.text;
+        stateCopy[todoIndex].updated = new Date().valueOf();
+        return stateCopy;
       }
-    case actionTypes.DELETE_TODO:
-      if (action.payload !== undefined) {
-        const stateCopy = [ ...state ];
-        const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
-        if (todoIndex >= 0) {
-          stateCopy[todoIndex].deleted = true;
-          stateCopy[todoIndex].updated = new Date().valueOf();
-          return stateCopy;
-        } else {
-          return state;
-        }
-      } else {
-        return state;
+      return state;
+    }
+    case actionTypes.DELETE_TODO: {
+      const stateCopy = [...state];
+      const todoIndex = stateCopy.map(todo => todo.id).indexOf(action.payload);
+      if (todoIndex >= 0) {
+        stateCopy[todoIndex].deleted = true;
+        stateCopy[todoIndex].updated = new Date().valueOf();
+        return stateCopy;
       }
+      return state;
+    }
     default:
       return state;
   }
 };
 
-function renderWithRedux(
-  ui,
-  { initialState, store = createStore(reducer, initialState) } = {}
-) {
+function renderWithRedux(ui, { store = createStore(reducer, initialState) } = {}) {
   return {
     ...render(<Provider store={store}>{ui}</Provider>),
-    store,
-  }
+    store
+  };
 }
 
 describe('ToDo', () => {
@@ -137,7 +114,7 @@ describe('ToDo', () => {
     fireEvent.change(todoEditInput, { target: { value: newValue } });
     const submitEditingButton = getByTestId('submit-editing');
     fireEvent.click(submitEditingButton);
-    expect(store.getState()[0].text).toBe(newValue);    
+    expect(store.getState()[0].text).toBe(newValue);
   });
 
   it('checks todo', () => {
@@ -148,7 +125,9 @@ describe('ToDo', () => {
   });
 
   it('checks todo', () => {
-    const { getByTestId, store } = renderWithRedux(<ToDo todo={{ ...initialState[0], done: false }} />);
+    const { getByTestId, store } = renderWithRedux(
+      <ToDo todo={{ ...initialState[0], done: false }} />
+    );
     const deleteButton = getByTestId('delete');
     fireEvent.click(deleteButton);
     expect(store.getState()[0].deleted).toBeTruthy();

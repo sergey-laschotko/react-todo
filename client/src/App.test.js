@@ -15,18 +15,26 @@ const initialState = [
   }
 ];
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = initialState) => {
   return state;
 };
 
 describe('App', () => {
   it('renders title "ToDo"', () => {
-    const { getByText } = render(<Provider store={createStore(reducer)}><App /></Provider>);
+    const { getByText } = render(
+      <Provider store={createStore(reducer)}>
+        <App />
+      </Provider>
+    );
     expect(getByText('ToDo')).toBeInTheDocument();
   });
 
   it('renders links', () => {
-    const { getByText } = render(<Provider store={createStore(reducer)}><App /></Provider>);
+    const { getByText } = render(
+      <Provider store={createStore(reducer)}>
+        <App />
+      </Provider>
+    );
     expect(getByText('To Do')).toBeInTheDocument();
     expect(getByText('Done')).toBeInTheDocument();
     expect(getByText('Canceled')).toBeInTheDocument();
@@ -34,12 +42,20 @@ describe('App', () => {
   });
 
   it('renders New ToDo button', () => {
-    const { getByText } = render(<Provider store={createStore(reducer)}><App /></Provider>);
+    const { getByText } = render(
+      <Provider store={createStore(reducer)}>
+        <App />
+      </Provider>
+    );
     expect(getByText('New ToDo')).toBeInTheDocument();
   });
 
   it('renders ToDo list', () => {
-    const { getByText } = render(<Provider store={createStore(reducer)}><App /></Provider>);
+    const { getByText } = render(
+      <Provider store={createStore(reducer)}>
+        <App />
+      </Provider>
+    );
     expect(getByText('First ToDo')).toBeInTheDocument();
   });
 });

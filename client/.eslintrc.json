@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb", "prettier", "plugin:flowtype/recommended"],
+  "plugins": ["prettier", "flowtype"],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "prettier/prettier": ["error"],
+    "react/jsx-props-no-spreading": ["off"],
+    "no-param-reassign": ["off"]
+  },
+  "globals": {
+    "window": true,
+    "navigator": true,
+    "document": true,
+    "localStorage": true,
+    "fetch": true,
+    "describe": true,
+    "it": true,
+    "expect": true
+  }
+}

@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import AddToDo from './AddToDo';
-import { actionTypes } from '../../actionTypes';
+import actionTypes from '../../actionTypes';
 
 const initialState = [
   {
@@ -17,7 +17,7 @@ const initialState = [
 ];
 
 const reducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case actionTypes.ADD_TODO:
       return [...state, action.payload];
     default:
@@ -25,19 +25,20 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-function renderWithRedux(
-  ui,
-  { initialState, store = createStore(reducer, initialState) } = {}
-) {
+function renderWithRedux(ui, { store = createStore(reducer, initialState) } = {}) {
   return {
     ...render(<Provider store={store}>{ui}</Provider>),
-    store,
-  }
+    store
+  };
 }
 
 describe('AddToDo', () => {
   it('adds class visible to cancel button and expands input', () => {
-    const { getByTestId } = render(<Provider store={createStore(reducer)}><AddToDo /></Provider>);
+    const { getByTestId } = render(
+      <Provider store={createStore(reducer)}>
+        <AddToDo />
+      </Provider>
+    );
     const addButton = getByTestId('add-button');
     const cancelButton = getByTestId('cancel-button');
     const addTodoContainer = getByTestId('add-todo-container');
@@ -55,6 +56,11 @@ describe('AddToDo', () => {
     fireEvent.click(addButton);
     expect(todoInput.value).toBe('');
     expect(store.getState().length).toBe(2);
-    expect(store.getState().map(todo => todo.text).indexOf('Second ToDo')).toBe(1);
+    expect(
+      store
+        .getState()
+        .map(todo => todo.text)
+        .indexOf('Second ToDo')
+    ).toBe(1);
   });
 });

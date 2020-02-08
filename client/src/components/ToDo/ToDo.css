@@ -13,7 +13,7 @@
 }
 
 .todo.done {
-  background: #00C267;
+  background: #00c267;
   color: #f0f0f0;
 }
 
@@ -61,11 +61,11 @@
 
 .todo-action.edit,
 .todo-action.submit-editing {
-  color: #209CEE;
+  color: #209cee;
 }
 
 .todo-action.check {
-  color: #00C267;
+  color: #00c267;
 }
 
 .todo-action.undo {

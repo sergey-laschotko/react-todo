@@ -38,11 +38,11 @@
   font-weight: bold;
   padding: 20px 10px 10px;
   text-align: center;
-  color: #209CEE;
+  color: #209cee;
 }
 
 .heading-link {
-  color: #209CEE;
+  color: #209cee;
   text-decoration: none;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .button.success {
-  background: #209CEE;
+  background: #209cee;
   color: #fff;
 }
 
@@ -80,7 +80,7 @@
   display: inline-block;
   flex: 1;
   text-decoration: none;
-  color: #209CEE;
+  color: #209cee;
   padding: 10px 20px;
   border-radius: 5px;
 }
@@ -88,5 +88,5 @@
 .nav-link.active {
   font-weight: bold;
   color: #fff;
-  background: #209CEE;
+  background: #209cee;
 }
