@@ -6,7 +6,8 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "prettier/prettier": ["error"],
     "react/jsx-props-no-spreading": ["off"],
-    "no-param-reassign": ["off"]
+    "no-param-reassign": ["off"],
+    "react/button-has-type": ["off"]
   },
   "globals": {
     "window": true,

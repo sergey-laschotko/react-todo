@@ -67,11 +67,16 @@ function App<T: *>({ ...rest }: PropsType<T>) {
   useEffect(controlSocket, []);
   useEffect(updateCurrentTodos, [todos]);
   useEffect(() => {
+    let timerId;
     if (error) {
-      setTimeout(() => {
+      timerId = setTimeout(() => {
         setError('');
       }, 3000);
     }
+
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [error]);
 
   return (

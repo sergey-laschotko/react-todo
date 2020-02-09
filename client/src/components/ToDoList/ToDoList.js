@@ -8,15 +8,22 @@ import ToDo from '../ToDo';
 import { type StateType, type ToDosType } from '../../types';
 import { changeOrder } from '../../actions';
 
-type PropsType<T> = T & {
+type PropsType = {
   location: Location,
   type: string,
-  todos: ToDosType
+  todos: ToDosType,
+  socket: { [key: string]: any } | typeof undefined,
+  changeOrderAction?: ({ id1: string, id2: string }) => { [key: string]: any }
 };
 
-const ToDoList = <T: *>({ location, type, todos, socket, ...rest }: PropsType<T>) => {
+const ToDoList = ({
+  location,
+  type,
+  todos,
+  socket = undefined,
+  changeOrderAction = ({ id1, id2 }) => ({ id1, id2 })
+}: PropsType) => {
   const [currentToDos, setCurrentToDos] = useState([]);
-  const { changeOrderAction } = rest;
 
   const prepareTodosList: () => void = () => {
     if (type === 'to-do') {
@@ -89,6 +96,10 @@ const ToDoList = <T: *>({ location, type, todos, socket, ...rest }: PropsType<T>
       </Droppable>
     </DragDropContext>
   );
+};
+
+ToDoList.defaultProps = {
+  changeOrderAction: ({ id1, id2 }) => ({ id1, id2 })
 };
 
 const mapStateToProps = (state: StateType) => ({

@@ -13,7 +13,9 @@
 .add-todo-input {
   width: 100%;
   border-radius: 5px;
+  border: 1px solid #ddd;
   padding: 10px;
+  margin-bottom: 10px;
   font-size: 14px;
   resize: none;
   font-family: inherit;

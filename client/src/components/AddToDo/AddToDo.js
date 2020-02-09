@@ -4,17 +4,35 @@ import './AddToDo.css';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
 import { addToDo } from '../../actions';
+import type { ToDoType } from '../../types';
+import Button from '../ui/Button';
 
-type PropsType<T> = T;
+type PropsType = {
+  socket: { [key: string]: any } | typeof undefined,
+  addToDoAction: (todo: ToDoType) => { [key: string]: any } | (any => void)
+};
 
-const AddToDo = <T: *>({ socket, ...props }: PropsType<T>) => {
+const AddToDo = ({
+  socket = undefined,
+  addToDoAction = ({ id, text, done, canceled, deleted, updated }) => ({
+    id,
+    text,
+    done,
+    canceled,
+    deleted,
+    updated
+  })
+}: PropsType) => {
   const [isAdding, setIsAdding] = useState(false);
   const [todo, setToDo] = useState('');
-  const { addToDoAction } = props;
+  const inputRef = React.createRef();
 
   const add: () => void = () => {
     if (!isAdding) {
       setIsAdding(true);
+      if (inputRef && inputRef.current) {
+        inputRef.current.focus();
+      }
       return;
     }
     if (todo) {
@@ -28,11 +46,16 @@ const AddToDo = <T: *>({ socket, ...props }: PropsType<T>) => {
       };
 
       addToDoAction(newToDo);
+      setToDo('');
       if (socket) {
         socket.emit('new todo', newToDo);
       }
-      setToDo('');
     }
+  };
+
+  const onFormSubmit: (e: SyntheticEvent<HTMLButtonElement>) => void = e => {
+    e.preventDefault();
+    add();
   };
 
   const cancelAdding: () => void = () => {
@@ -40,47 +63,38 @@ const AddToDo = <T: *>({ socket, ...props }: PropsType<T>) => {
     setToDo('');
   };
 
-  const onAddInputKeyDown: (event: SyntheticKeyboardEvent<HTMLButtonElement>) => void = event => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      add();
-    }
-  };
+  const cancelButtonClasses = isAdding
+    ? ['add-todo-action', 'visible']
+    : ['add-todo-action', 'hidden'];
+  const submitButtonClasses = isAdding
+    ? ['add-todo-action', 'success']
+    : ['add-todo-action', 'success', 'fullwidth'];
 
   return (
-    <>
+    <form onSubmit={onFormSubmit}>
       <div
         className={`add-todo-input-container ${isAdding ? 'expanded' : ''}`}
         data-testid="add-todo-container"
       >
-        <textarea
+        <input
+          type="text"
           placeholder="Enter new ToDo"
           data-testid="todo-input"
           className="add-todo-input"
           value={todo}
           onChange={e => setToDo(e.target.value)}
-          onKeyDown={onAddInputKeyDown}
+          ref={inputRef}
         />
       </div>
       <div className="add-todo-actions">
-        <button
-          type="button"
-          className={`button add-todo-action ${isAdding ? 'visible' : 'hidden'}`}
-          onClick={cancelAdding}
-          data-testid="cancel-button"
-        >
+        <Button classes={cancelButtonClasses} onClick={cancelAdding} dataTestId="cancel-button">
           Cancel
-        </button>
-        <button
-          type="button"
-          className={`button add-todo-action success ${isAdding ? '' : 'fullwidth'}`}
-          onClick={add}
-          data-testid="add-button"
-        >
+        </Button>
+        <Button classes={submitButtonClasses} onClick={add} dataTestId="add-button">
           {isAdding ? 'Add' : 'New ToDo'}
-        </button>
+        </Button>
       </div>
-    </>
+    </form>
   );
 };
 
