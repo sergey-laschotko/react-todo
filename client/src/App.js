@@ -17,7 +17,7 @@ function App<T: *>({ ...rest }: PropsType<T>) {
   const [error, setError] = useState('');
 
   const controlSocket = () => {
-    const socket = socketIOClient('http://localhost:5000/');
+    const socket = socketIOClient(process.env.REACT_APP_WEBSOCKET);
 
     socket.on('connect', () => {
       setSocketInstance(socket);
@@ -57,7 +57,7 @@ function App<T: *>({ ...rest }: PropsType<T>) {
   };
 
   const getTodosFromLS = () => {
-    const state = localStorage.getItem('todos');
+    const state = localStorage.getItem(process.env.REACT_APP_LS_TODOS);
     if (state) {
       setToDosAction(JSON.parse(state));
     }

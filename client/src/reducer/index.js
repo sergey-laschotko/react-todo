@@ -6,7 +6,7 @@ const todos = (state: StateType = [], action: ActionType) => {
   switch (action.type) {
     case actionTypes.ADD_TODO: {
       const newState = [...state, action.payload];
-      localStorage.setItem('todos', JSON.stringify(newState));
+      localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(newState));
       return newState;
     }
     case actionTypes.CANCEL_TODO: {
@@ -15,7 +15,7 @@ const todos = (state: StateType = [], action: ActionType) => {
       if (todoIndex >= 0) {
         stateCopy[todoIndex].canceled = true;
         stateCopy[todoIndex].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
@@ -26,7 +26,7 @@ const todos = (state: StateType = [], action: ActionType) => {
       if (todoIndex >= 0) {
         stateCopy[todoIndex].canceled = false;
         stateCopy[todoIndex].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
@@ -37,7 +37,7 @@ const todos = (state: StateType = [], action: ActionType) => {
       if (todoIndex >= 0) {
         stateCopy[todoIndex].done = true;
         stateCopy[todoIndex].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
@@ -48,7 +48,7 @@ const todos = (state: StateType = [], action: ActionType) => {
       if (todoIndex >= 0) {
         stateCopy[todoIndex].text = action.payload.text;
         stateCopy[todoIndex].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
@@ -59,7 +59,7 @@ const todos = (state: StateType = [], action: ActionType) => {
       if (todoIndex >= 0) {
         stateCopy[todoIndex].deleted = true;
         stateCopy[todoIndex].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
@@ -73,13 +73,13 @@ const todos = (state: StateType = [], action: ActionType) => {
         const [removed] = stateCopy.splice(todo1Index, 1);
         stateCopy.splice(todo2Index, 0, removed);
         stateCopy[todo2Index].updated = new Date().valueOf();
-        localStorage.setItem('todos', JSON.stringify(stateCopy));
+        localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(stateCopy));
         return stateCopy;
       }
       return state;
     }
     case actionTypes.SET_TODOS: {
-      localStorage.setItem('todos', JSON.stringify(action.payload));
+      localStorage.setItem(process.env.REACT_APP_LS_TODOS, JSON.stringify(action.payload));
       return action.payload;
     }
     default: {
