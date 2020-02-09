@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ToDo.css';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,6 +37,8 @@ const ToDo = ({
 }: PropsType) => {
   const [isEditing, setIsEditing] = useState(false);
   const [toDoText, setToDoText] = useState(todo.text);
+
+  useEffect(() => setToDoText(todo.text), [todo.text]);
 
   const cancelEditing: () => void = () => {
     setToDoText(todo.text);
@@ -97,14 +99,6 @@ const ToDo = ({
       <div className="todo-actions">
         {isEditing ? (
           <>
-            <button
-              type="button"
-              className="button icon-button todo-action cancel-editing"
-              data-testid="cancel-editing"
-              onClick={cancelEditing}
-            >
-              <FontAwesomeIcon icon={faTimesCircle} />
-            </button>
             <Button
               classes={['todo-action', 'cancel-editing']}
               iconButton
@@ -113,14 +107,6 @@ const ToDo = ({
             >
               <FontAwesomeIcon icon={faTimesCircle} />
             </Button>
-            <button
-              type="button"
-              className="button icon-button todo-action submit-editing"
-              data-testid="submit-editing"
-              onClick={submitEditing}
-            >
-              <FontAwesomeIcon icon={faCheckCircle} />
-            </button>
             <Button
               classes={['todo-action', 'submit-editing']}
               iconButton

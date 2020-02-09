@@ -5,13 +5,17 @@ import { BrowserRouter as Router, Switch, Route, NavLink, Link } from 'react-rou
 import socketIOClient from 'socket.io-client';
 import { connect } from 'react-redux';
 import { setToDos } from './actions';
+import { type ToDosType } from './types';
 import AddToDo from './components/AddToDo';
 import ToDoList from './components/ToDoList';
 
-type PropsType<T> = T;
+type PropsType = {
+  todos?: ToDosType,
+  setToDosAction?: (todos: ToDosType) => void
+};
 
-function App<T: *>({ ...rest }: PropsType<T>) {
-  const { setToDosAction, todos } = rest;
+function App({ todos = [], setToDosAction = () => [] }: PropsType) {
+  const lsTodos = process.env.REACT_APP_LS_TODOS || 'todos';
   const [socketInstance, setSocketInstance] = useState();
   const setCurrentTodos = useState(todos)[1];
   const [error, setError] = useState('');
@@ -38,7 +42,9 @@ function App<T: *>({ ...rest }: PropsType<T>) {
       }
     });
 
-    socket.on('todos were changed', state => setToDosAction(state));
+    socket.on('todos were changed', state => {
+      setToDosAction(state);
+    });
 
     socket.on('error occured', data => {
       setError(data.error);
@@ -46,18 +52,19 @@ function App<T: *>({ ...rest }: PropsType<T>) {
     });
 
     return () => {
-      if (socketInstance) {
-        socketInstance.disconnect();
+      if (socket) {
+        socket.disconnect();
       }
     };
   };
 
   const updateCurrentTodos = () => {
+    localStorage.setItem(lsTodos, JSON.stringify(todos));
     setCurrentTodos(todos);
   };
 
   const getTodosFromLS = () => {
-    const state = localStorage.getItem(process.env.REACT_APP_LS_TODOS);
+    const state = localStorage.getItem(lsTodos);
     if (state) {
       setToDosAction(JSON.parse(state));
     }
@@ -127,6 +134,11 @@ function App<T: *>({ ...rest }: PropsType<T>) {
     </Router>
   );
 }
+
+App.defaultProps = {
+  todos: [],
+  setToDosAction: () => []
+};
 
 const mapStateToProps = state => ({
   todos: state

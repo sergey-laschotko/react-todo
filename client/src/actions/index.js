@@ -1,6 +1,6 @@
 // @flow
 import actionTypes from '../actionTypes';
-import type { ToDoType, EditToDoPropType, ChangeOrderType } from '../types';
+import type { ToDoType, EditToDoPropType } from '../types';
 
 export const addToDo = (todo: ToDoType) => ({
   type: actionTypes.ADD_TODO,
@@ -35,9 +35,4 @@ export const editToDo = ({ id, text }: EditToDoPropType) => ({
 export const deleteToDo = (todoId: string) => ({
   type: actionTypes.DELETE_TODO,
   payload: todoId
-});
-
-export const changeOrder = ({ id1, id2 }: ChangeOrderType) => ({
-  type: actionTypes.CHANGE_ORDER,
-  payload: { id1, id2 }
 });

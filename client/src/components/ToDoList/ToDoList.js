@@ -2,65 +2,57 @@
 import React, { useState, useEffect } from 'react';
 import './ToDoList.css';
 import { connect } from 'react-redux';
-import { withRouter, type Location } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import ToDo from '../ToDo';
 import { type StateType, type ToDosType } from '../../types';
-import { changeOrder } from '../../actions';
+import { setToDos } from '../../actions';
 
 type PropsType = {
-  location: Location,
   type: string,
   todos: ToDosType,
   socket: { [key: string]: any } | typeof undefined,
-  changeOrderAction?: ({ id1: string, id2: string }) => { [key: string]: any }
+  setToDosAction?: (todos: ToDosType) => void
 };
 
-const ToDoList = ({
-  location,
-  type,
-  todos,
-  socket = undefined,
-  changeOrderAction = ({ id1, id2 }) => ({ id1, id2 })
-}: PropsType) => {
+const ToDoList = ({ type, todos, socket = undefined, setToDosAction = () => [] }: PropsType) => {
   const [currentToDos, setCurrentToDos] = useState([]);
 
-  const prepareTodosList: () => void = () => {
+  const prepareTodosList: (providedTodos?: ToDosType | typeof undefined) => void = (
+    providedTodos: ToDosType | typeof undefined
+  ) => {
+    const todoList = providedTodos || todos;
     if (type === 'to-do') {
-      setCurrentToDos(
-        todos.filter(todo => !todo.done && !todo.canceled && !todo.canceled && !todo.deleted)
-      );
+      setCurrentToDos(todoList.filter(todo => !todo.done && !todo.canceled && !todo.deleted));
     } else if (type === 'done') {
-      setCurrentToDos(todos.filter(todo => todo.done && !todo.deleted));
+      setCurrentToDos(todoList.filter(todo => todo.done && !todo.deleted));
     } else if (type === 'canceled') {
-      setCurrentToDos(todos.filter(todo => todo.canceled && !todo.deleted));
+      setCurrentToDos(todoList.filter(todo => todo.canceled && !todo.deleted));
     } else {
-      setCurrentToDos(todos.filter(todo => !todo.deleted));
+      setCurrentToDos(todoList.filter(todo => !todo.deleted));
     }
   };
 
-  useEffect(prepareTodosList, [location, todos]);
+  useEffect(prepareTodosList, [type, todos]);
 
   const onDragEnd: (any, any) => void = ({ destination, source }) => {
-    if (!destination) {
-      return;
-    }
-
-    const todo1 = currentToDos[source.index];
-    const todo2 = currentToDos[destination.index];
-    const id1 = todo1.id;
-    const id2 = todo2.id;
-    const ids = todos.map(todo => todo.id);
-    const id1Index = ids.indexOf(id1);
-    const id2Index = ids.indexOf(id2);
-    const toDosCopy = [...todos];
-    changeOrderAction({ id1, id2 });
-    const [removed] = toDosCopy.splice(id1Index, 1);
-    toDosCopy.splice(id2Index, 0, removed);
-    toDosCopy[id2Index].updated = new Date().valueOf();
-    setCurrentToDos(toDosCopy);
-    if (socket) {
-      socket.emit('change order', toDosCopy);
+    if (source && destination && source.index !== destination.index) {
+      const todosCopy = [...todos];
+      const todo1 = currentToDos[source.index];
+      const todo2 = currentToDos[destination.index];
+      const todoIds = todosCopy.map(todo => todo.id);
+      const todo1Index = todoIds.indexOf(todo1.id);
+      const todo2Index = todoIds.indexOf(todo2.id);
+      if (todo1Index >= 0 && todo2Index >= 0) {
+        const [removed] = todosCopy.splice(todo1Index, 1);
+        todosCopy.splice(todo2Index, 0, removed);
+        todosCopy[todo2Index].updated = new Date().valueOf();
+        prepareTodosList(todosCopy);
+        setToDosAction(todosCopy);
+        if (socket) {
+          socket.emit('change order', todosCopy);
+        }
+      }
     }
   };
 
@@ -99,7 +91,7 @@ const ToDoList = ({
 };
 
 ToDoList.defaultProps = {
-  changeOrderAction: ({ id1, id2 }) => ({ id1, id2 })
+  setToDosAction: () => []
 };
 
 const mapStateToProps = (state: StateType) => ({
@@ -107,7 +99,7 @@ const mapStateToProps = (state: StateType) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeOrderAction: ({ id1, id2 }) => dispatch(changeOrder({ id1, id2 }))
+  setToDosAction: todos => dispatch(setToDos(todos))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToDoList));
